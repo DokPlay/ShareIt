@@ -17,6 +17,9 @@ import ru.practicum.shareit.user.User;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
+/**
+ * Domain model describing a reservation of an item.
+ */
 public class Booking {
   private Long id;
   private LocalDateTime start;

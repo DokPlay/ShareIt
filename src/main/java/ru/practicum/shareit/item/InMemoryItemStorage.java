@@ -9,6 +9,9 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.NotFoundException;
 
+/**
+ * In-memory item repository used for early-stage development and tests.
+ */
 @Repository
 public class InMemoryItemStorage implements ItemStorage {
 

@@ -13,6 +13,9 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
+/**
+ * Transport-layer representation of an item used in HTTP requests and responses.
+ */
 public class ItemDto {
   private Long id;
   private String name;

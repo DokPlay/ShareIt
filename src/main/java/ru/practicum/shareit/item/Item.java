@@ -15,6 +15,9 @@ import ru.practicum.shareit.user.User;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
+/**
+ * Item aggregate with owner and optional request reference.
+ */
 public class Item {
   private Long id;
   private String name;

@@ -8,6 +8,9 @@ import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserStorage;
 
+/**
+ * Application-layer service encapsulating item validation and ownership checks.
+ */
 @Service
 public class ItemServiceImpl implements ItemService {
 
@@ -20,6 +23,9 @@ public class ItemServiceImpl implements ItemService {
   }
 
   @Override
+  /**
+   * Creates a new item after ensuring required fields and owner existence.
+   */
   public ItemDto create(long ownerId, ItemDto itemDto) {
     validateCreate(itemDto);
     User owner = userStorage.getById(ownerId);
@@ -35,6 +41,9 @@ public class ItemServiceImpl implements ItemService {
   }
 
   @Override
+  /**
+   * Updates fields of an item while enforcing ownership and existence constraints.
+   */
   public ItemDto update(long ownerId, long itemId, ItemDto itemDto) {
     if (!userStorage.existsById(ownerId)) {
       throw new NotFoundException("User with id=" + ownerId + " not found.");
@@ -64,6 +73,9 @@ public class ItemServiceImpl implements ItemService {
   }
 
   @Override
+  /**
+   * Fetches item details, verifying that requester exists.
+   */
   public ItemDto getById(long userId, long itemId) {
     if (!userStorage.existsById(userId)) {
       throw new NotFoundException("User with id=" + userId + " not found.");
@@ -72,6 +84,9 @@ public class ItemServiceImpl implements ItemService {
   }
 
   @Override
+  /**
+   * Returns all items for the specified owner after existence check.
+   */
   public List<ItemDto> getOwnerItems(long ownerId) {
     if (!userStorage.existsById(ownerId)) {
       throw new NotFoundException("User with id=" + ownerId + " not found.");
@@ -80,6 +95,9 @@ public class ItemServiceImpl implements ItemService {
   }
 
   @Override
+  /**
+   * Performs full-text search over available items for a known user.
+   */
   public List<ItemDto> search(long userId, String text) {
     if (!userStorage.existsById(userId)) {
       throw new NotFoundException("User with id=" + userId + " not found.");

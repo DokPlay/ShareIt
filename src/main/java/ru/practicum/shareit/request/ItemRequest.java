@@ -15,6 +15,9 @@ import ru.practicum.shareit.user.User;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
+/**
+ * Captures a user's request for an item that may be fulfilled later.
+ */
 public class ItemRequest {
   private Long id;
   private String description;
