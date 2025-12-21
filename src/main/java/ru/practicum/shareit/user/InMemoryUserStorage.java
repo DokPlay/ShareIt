@@ -10,6 +10,9 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.NotFoundException;
 
+/**
+ * In-memory implementation of user storage with simple uniqueness checks.
+ */
 @Repository
 public class InMemoryUserStorage implements UserStorage {
 

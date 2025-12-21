@@ -13,6 +13,9 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
+/**
+ * DTO for transferring user data via REST layer.
+ */
 public class UserDto {
   private Long id;
   private String name;

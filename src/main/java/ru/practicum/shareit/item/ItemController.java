@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * REST endpoints for CRUD operations over items.
+ */
 @RestController
 @RequestMapping("/items")
 public class ItemController {
@@ -24,6 +27,9 @@ public class ItemController {
     this.itemService = itemService;
   }
 
+  /**
+   * Registers a new item owned by the requester.
+   */
   @PostMapping
   public ItemDto create(
       @RequestHeader(USER_HEADER) long userId,
@@ -32,6 +38,9 @@ public class ItemController {
     return itemService.create(userId, itemDto);
   }
 
+  /**
+   * Applies partial updates to an existing item when owned by the caller.
+   */
   @PatchMapping("/{itemId}")
   public ItemDto update(
       @RequestHeader(USER_HEADER) long userId,
@@ -41,6 +50,9 @@ public class ItemController {
     return itemService.update(userId, itemId, itemDto);
   }
 
+  /**
+   * Retrieves item details considering requester visibility rules.
+   */
   @GetMapping("/{itemId}")
   public ItemDto getById(
       @RequestHeader(USER_HEADER) long userId,
@@ -49,11 +61,17 @@ public class ItemController {
     return itemService.getById(userId, itemId);
   }
 
+  /**
+   * Lists all items belonging to the provided owner id.
+   */
   @GetMapping
   public List<ItemDto> getOwnerItems(@RequestHeader(USER_HEADER) long userId) {
     return itemService.getOwnerItems(userId);
   }
 
+  /**
+   * Searches available items by text across name and description fields.
+   */
   @GetMapping("/search")
   public List<ItemDto> search(
       @RequestHeader(USER_HEADER) long userId,
