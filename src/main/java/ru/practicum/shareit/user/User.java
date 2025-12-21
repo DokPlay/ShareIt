@@ -13,6 +13,9 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
+/**
+ * User aggregate storing identity and contact information.
+ */
 public class User {
   private Long id;
   private String name;

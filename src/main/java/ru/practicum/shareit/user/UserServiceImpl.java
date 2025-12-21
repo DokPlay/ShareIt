@@ -4,6 +4,9 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.ValidationException;
 
+/**
+ * Service layer handling validation and interaction with user storage.
+ */
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -14,6 +17,9 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  /**
+   * Creates a user after validating required fields.
+   */
   public UserDto create(UserDto userDto) {
     validateCreate(userDto);
     User created = userStorage.create(UserMapper.toUser(userDto));
@@ -21,6 +27,9 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  /**
+   * Applies partial updates to an existing user.
+   */
   public UserDto update(long userId, UserDto userDto) {
     User existing = userStorage.getById(userId);
 
@@ -36,16 +45,25 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  /**
+   * Returns user details by id.
+   */
   public UserDto getById(long userId) {
     return UserMapper.toUserDto(userStorage.getById(userId));
   }
 
   @Override
+  /**
+   * Lists all users currently stored.
+   */
   public List<UserDto> getAll() {
     return userStorage.getAll().stream().map(UserMapper::toUserDto).toList();
   }
 
   @Override
+  /**
+   * Deletes a user record by id.
+   */
   public void delete(long userId) {
     userStorage.delete(userId);
   }
