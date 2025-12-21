@@ -1,6 +1,7 @@
 package ru.practicum.shareit.exception;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -36,6 +37,15 @@ public class ErrorHandler {
    */
   public ErrorResponse handleValidation(ValidationException e) {
     return new ErrorResponse(e.getMessage());
+  }
+
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  /**
+   * Signals annotation-based validation problems with 400 responses.
+   */
+  public ErrorResponse handleAnnotationValidation(MethodArgumentNotValidException e) {
+    return new ErrorResponse("Validation error: " + e.getMessage());
   }
 
   @ExceptionHandler(Throwable.class)
