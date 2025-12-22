@@ -3,30 +3,43 @@ package ru.practicum.shareit.user;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.Set;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.NotFoundException;
 
-/**
- * In-memory implementation of user storage with simple uniqueness checks.
- */
 @Repository
 public class InMemoryUserStorage implements UserStorage {
 
   private final Map<Long, User> users = new HashMap<>();
-  private final AtomicLong idSeq = new AtomicLong(0);
+  private final Set<String> uniqueEmails = new HashSet<>();
+  private final Map<Long, String> userEmails = new HashMap<>();
+  private long idSeq = 0;
 
   @Override
   public User create(User user) {
-    long id = idSeq.incrementAndGet();
-    user.setId(id);
+    String email = user.getEmail();
+    String normalizedEmail = null;
 
-    validateEmailUnique(user.getEmail(), id);
-    users.put(id, copyOf(user));
-    return copyOf(user);
+    if (email != null) {
+      normalizedEmail = email.trim().toLowerCase();
+      if (uniqueEmails.contains(normalizedEmail)) {
+        throw new ConflictException("Email '" + email + "' is already used by another user.");
+      }
+    }
+
+    user.setId(++idSeq);
+
+    if (normalizedEmail != null) {
+      uniqueEmails.add(normalizedEmail);
+      userEmails.put(user.getId(), normalizedEmail);
+    }
+
+    users.put(user.getId(), user);
+    return user;
   }
 
   @Override
@@ -39,9 +52,25 @@ public class InMemoryUserStorage implements UserStorage {
       throw new NotFoundException("User with id=" + id + " not found.");
     }
 
-    validateEmailUnique(user.getEmail(), id);
-    users.put(id, copyOf(user));
-    return copyOf(user);
+    String newEmail = user.getEmail();
+    if (newEmail != null) {
+      String newNormalized = newEmail.trim().toLowerCase();
+      String oldNormalized = userEmails.get(id);
+
+      if (!newNormalized.equals(oldNormalized)) {
+        if (uniqueEmails.contains(newNormalized)) {
+          throw new ConflictException("Email '" + newEmail + "' is already used by another user.");
+        }
+        if (oldNormalized != null) {
+          uniqueEmails.remove(oldNormalized);
+        }
+        uniqueEmails.add(newNormalized);
+        userEmails.put(id, newNormalized);
+      }
+    }
+
+    users.put(id, user);
+    return user;
   }
 
   @Override
@@ -50,14 +79,14 @@ public class InMemoryUserStorage implements UserStorage {
     if (user == null) {
       throw new NotFoundException("User with id=" + userId + " not found.");
     }
-    return copyOf(user);
+    return user;
   }
 
   @Override
   public List<User> getAll() {
     List<User> result = new ArrayList<>(users.values());
     result.sort(Comparator.comparing(User::getId));
-    return result.stream().map(this::copyOf).toList();
+    return result;
   }
 
   @Override
@@ -65,29 +94,17 @@ public class InMemoryUserStorage implements UserStorage {
     if (!users.containsKey(userId)) {
       throw new NotFoundException("User with id=" + userId + " not found.");
     }
+
+    String email = userEmails.get(userId);
+    if (email != null) {
+      uniqueEmails.remove(email);
+      userEmails.remove(userId);
+    }
     users.remove(userId);
   }
 
   @Override
   public boolean existsById(long userId) {
     return users.containsKey(userId);
-  }
-
-  private void validateEmailUnique(String email, long currentUserId) {
-    if (email == null) {
-      return;
-    }
-    String normalized = email.trim().toLowerCase();
-    for (User existing : users.values()) {
-      if (!existing.getId().equals(currentUserId)
-          && existing.getEmail() != null
-          && existing.getEmail().trim().toLowerCase().equals(normalized)) {
-        throw new ConflictException("Email '" + email + "' is already used by another user.");
-      }
-    }
-  }
-
-  private User copyOf(User user) {
-    return new User(user.getId(), user.getName(), user.getEmail());
   }
 }
