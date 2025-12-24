@@ -1,17 +1,21 @@
 # Maven
 target/
 !.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
-# IDE
+# IDE - IntelliJ IDEA
 .idea/
 *.iml
 *.iws
 *.ipr
+out/
 
 # VS Code
 .vscode/
+*.code-workspace
 
-# gemini
+# Gemini
 /.gemini/
 
 # Eclipse/STS
@@ -22,6 +26,7 @@ target/
 .factorypath
 .springBeans
 .sts4-cache/
+bin/
 
 # NetBeans
 /nbproject/private/
@@ -29,13 +34,54 @@ target/
 /dist/
 /nbdist/
 /.nb-gradle/
+build/
 
 # OS junk
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+Desktop.ini
 
-# Secrets (на всякий случай)
+# Secrets and local config
 .env
 *.env
+.env.local
+.env.*.local
 application-local.properties
 application-secret.properties
+application-prod.properties
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test results
+test-output/
+surefire-reports/
+
+# Package files
+*.jar
+!**/src/main/**/lib/*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*~
+.cache/
+
+# PowerShell test output
+test-results/
