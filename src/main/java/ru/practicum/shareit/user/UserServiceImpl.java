@@ -2,70 +2,70 @@ package ru.practicum.shareit.user;
 
 import java.util.List;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.exception.ConflictException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 
 /**
- * Service layer handling validation and interaction with user storage.
+ * Service layer handling validation and interaction with user repository.
  */
 @Service
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
-  private final UserStorage userStorage;
+  private final UserRepository userRepository;
 
-  public UserServiceImpl(UserStorage userStorage) {
-    this.userStorage = userStorage;
+  public UserServiceImpl(UserRepository userRepository) {
+    this.userRepository = userRepository;
   }
 
   @Override
-  /**
-   * Creates a user after validating required fields.
-   */
+  @Transactional
   public UserDto create(UserDto userDto) {
     validateCreate(userDto);
-    User created = userStorage.create(UserMapper.toUser(userDto));
+    checkEmailUniqueness(userDto.getEmail(), null);
+    User created = userRepository.save(UserMapper.toUser(userDto));
     return UserMapper.toUserDto(created);
   }
 
   @Override
-  /**
-   * Applies partial updates to an existing user.
-   */
+  @Transactional
   public UserDto update(long userId, UserDto userDto) {
-    User existing = userStorage.getById(userId);
+    User existing = userRepository.findById(userId)
+        .orElseThrow(() -> new NotFoundException("User with id=" + userId + " not found."));
 
     if (userDto.getName() != null) {
       existing.setName(userDto.getName());
     }
     if (userDto.getEmail() != null) {
+      checkEmailUniqueness(userDto.getEmail(), userId);
       existing.setEmail(userDto.getEmail());
     }
 
-    User updated = userStorage.update(existing);
+    User updated = userRepository.save(existing);
     return UserMapper.toUserDto(updated);
   }
 
   @Override
-  /**
-   * Returns user details by id.
-   */
   public UserDto getById(long userId) {
-    return UserMapper.toUserDto(userStorage.getById(userId));
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new NotFoundException("User with id=" + userId + " not found."));
+    return UserMapper.toUserDto(user);
   }
 
   @Override
-  /**
-   * Lists all users currently stored.
-   */
   public List<UserDto> getAll() {
-    return userStorage.getAll().stream().map(UserMapper::toUserDto).toList();
+    return userRepository.findAll().stream().map(UserMapper::toUserDto).toList();
   }
 
   @Override
-  /**
-   * Deletes a user record by id.
-   */
+  @Transactional
   public void delete(long userId) {
-    userStorage.delete(userId);
+    if (!userRepository.existsById(userId)) {
+      throw new NotFoundException("User with id=" + userId + " not found.");
+    }
+    userRepository.deleteById(userId);
   }
 
   private void validateCreate(UserDto dto) {
@@ -78,5 +78,13 @@ public class UserServiceImpl implements UserService {
     if (dto.getEmail() == null || dto.getEmail().isBlank()) {
       throw new ValidationException("User email must not be blank.");
     }
+  }
+
+  private void checkEmailUniqueness(String email, Long excludeUserId) {
+    userRepository.findByEmail(email).ifPresent(existingUser -> {
+      if (excludeUserId == null || !existingUser.getId().equals(excludeUserId)) {
+        throw new ConflictException("Email '" + email + "' is already used by another user.");
+      }
+    });
   }
 }

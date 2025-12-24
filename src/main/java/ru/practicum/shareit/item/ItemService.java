@@ -31,4 +31,9 @@ public interface ItemService {
    * Performs text-based search across available items, typically ignoring unavailable entries.
    */
   List<ItemDto> search(long userId, String text);
+
+  /**
+   * Adds a comment to an item from a user who has completed a booking.
+   */
+  CommentDto addComment(long userId, long itemId, CommentDto commentDto);
 }

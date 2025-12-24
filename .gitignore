@@ -11,6 +11,9 @@ target/
 # VS Code
 .vscode/
 
+# gemini
+/.gemini/
+
 # Eclipse/STS
 .classpath
 .project

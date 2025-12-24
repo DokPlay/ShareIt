@@ -79,4 +79,16 @@ public class ItemController {
   ) {
     return itemService.search(userId, text);
   }
+
+  /**
+   * Adds a comment to an item from a user who has completed a booking.
+   */
+  @PostMapping("/{itemId}/comment")
+  public CommentDto addComment(
+      @RequestHeader(USER_HEADER) long userId,
+      @PathVariable long itemId,
+      @RequestBody CommentDto commentDto
+  ) {
+    return itemService.addComment(userId, itemId, commentDto);
+  }
 }
