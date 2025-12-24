@@ -1,4 +1,37 @@
-# ShareIt[Русская версия](README.ru.md)**ShareIt** is a RESTful web service for sharing items between users. Users can add items for sharing, search for available items, book them for specific periods, and leave comments after use.## 🚀 Features### Users- Create, update, delete users- Email uniqueness validation### Items- CRUD operations for items with ownership checks- Full-text search across available items (name + description)- Comments from users who completed bookings### Bookings- Create booking requests for available items- Owner approval/rejection workflow- Filter bookings by state: `ALL`, `CURRENT`, `PAST`, `FUTURE`, `WAITING`, `REJECTED`- View bookings as booker or as item owner- Last/next booking info for item owners## 🛠 Tech Stack| Technology | Version | Purpose ||------------|---------|---------|| Java | 17+ | Programming language || Spring Boot | 3.5.x | Application framework || Spring Data JPA | 3.x | Database access || PostgreSQL | 16 | Production database || H2 | 2.x | Testing database || Hibernate | 6.x | ORM |
+# ShareIt
+
+[Русская версия](README.ru.md)
+
+**ShareIt** is a RESTful web service for sharing items between users. Users can add items for sharing, search for available items, book them for specific periods, and leave comments after use.
+
+## 🚀 Features
+
+### Users
+- Create, update, delete users
+- Email uniqueness validation
+
+### Items
+- CRUD operations for items with ownership checks
+- Full-text search across available items (name + description)
+- Comments from users who completed bookings
+
+### Bookings
+- Create booking requests for available items
+- Owner approval/rejection workflow
+- Filter bookings by state: `ALL`, `CURRENT`, `PAST`, `FUTURE`, `WAITING`, `REJECTED`
+- View bookings as booker or as item owner
+- Last/next booking info for item owners
+
+## 🛠 Tech Stack
+
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| Java | 17+ | Programming language |
+| Spring Boot | 3.5.x | Application framework |
+| Spring Data JPA | 3.x | Database access |
+| PostgreSQL | 16 | Production database |
+| H2 | 2.x | Testing database |
+| Hibernate | 6.x | ORM |
 | Lombok | 1.18.x | Boilerplate reduction |
 | Maven | 3.9.x | Build tool |
 | Docker | 20+ | Containerization |
