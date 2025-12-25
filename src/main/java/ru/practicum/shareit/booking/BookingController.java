@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -32,7 +33,7 @@ public class BookingController {
   @PostMapping
   public BookingDto create(
       @RequestHeader(USER_HEADER) long userId,
-      @RequestBody BookingCreateDto bookingCreateDto
+      @Valid @RequestBody BookingCreateDto bookingCreateDto
   ) {
     return bookingService.create(userId, bookingCreateDto);
   }

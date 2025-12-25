@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -150,16 +151,16 @@ public class ItemServiceImpl implements ItemService {
       // Add booking info
       List<Booking> itemBookings = bookingsByItem.getOrDefault(item.getId(), new ArrayList<>());
 
-      // Find last booking (end < now or start < now, sorted by end desc)
+      // Find last booking (end < now, sorted by end desc)
       itemBookings.stream()
-          .filter(b -> b.getStart().isBefore(now))
-          .max((b1, b2) -> b1.getEnd().compareTo(b2.getEnd()))
+          .filter(b -> b.getEnd().isBefore(now))
+          .max(Comparator.comparing(Booking::getEnd))
           .ifPresent(b -> dto.setLastBooking(BookingMapper.toBookingShortDto(b)));
 
       // Find next booking (start > now, sorted by start asc)
       itemBookings.stream()
           .filter(b -> b.getStart().isAfter(now))
-          .min((b1, b2) -> b1.getStart().compareTo(b2.getStart()))
+          .min(Comparator.comparing(Booking::getStart))
           .ifPresent(b -> dto.setNextBooking(BookingMapper.toBookingShortDto(b)));
 
       return dto;
@@ -196,6 +197,10 @@ public class ItemServiceImpl implements ItemService {
 
     if (commentDto.getText() == null || commentDto.getText().isBlank()) {
       throw new ValidationException("Comment text must not be blank.");
+    }
+
+    if (commentDto.getText().length() > 2000) {
+      throw new ValidationException("Comment text must not exceed 2000 characters.");
     }
 
     Comment comment = new Comment();
