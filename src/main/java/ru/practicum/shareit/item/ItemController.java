@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import jakarta.validation.Valid;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -78,5 +79,17 @@ public class ItemController {
       @RequestParam("text") String text
   ) {
     return itemService.search(userId, text);
+  }
+
+  /**
+   * Adds a comment to an item from a user who has completed a booking.
+   */
+  @PostMapping("/{itemId}/comment")
+  public CommentDto addComment(
+      @RequestHeader(USER_HEADER) long userId,
+      @PathVariable long itemId,
+      @Valid @RequestBody CommentDto commentDto
+  ) {
+    return itemService.addComment(userId, itemId, commentDto);
   }
 }
