@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import jakarta.validation.Valid;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -87,7 +88,7 @@ public class ItemController {
   public CommentDto addComment(
       @RequestHeader(USER_HEADER) long userId,
       @PathVariable long itemId,
-      @RequestBody CommentDto commentDto
+      @Valid @RequestBody CommentDto commentDto
   ) {
     return itemService.addComment(userId, itemId, commentDto);
   }

@@ -84,10 +84,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
   // ========== Bookings for Item ==========
 
   /**
-   * Finds the last booking for an item (end <= now, sorted by end desc).
+   * Finds the last booking for an item (end < now, sorted by end desc).
    */
   @Query("SELECT b FROM Booking b WHERE b.item.id = :itemId " +
-         "AND b.start < :now AND b.status = 'APPROVED' ORDER BY b.end DESC")
+         "AND b.end < :now AND b.status = 'APPROVED' ORDER BY b.end DESC")
   List<Booking> findLastBookingByItemId(@Param("itemId") Long itemId, @Param("now") LocalDateTime now);
 
   /**

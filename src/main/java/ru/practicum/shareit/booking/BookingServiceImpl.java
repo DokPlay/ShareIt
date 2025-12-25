@@ -95,27 +95,14 @@ public class BookingServiceImpl implements BookingService {
     }
 
     LocalDateTime now = LocalDateTime.now();
-    List<Booking> bookings;
-
-    switch (state) {
-      case CURRENT:
-        bookings = bookingRepository.findCurrentByBookerId(userId, now);
-        break;
-      case PAST:
-        bookings = bookingRepository.findPastByBookerId(userId, now);
-        break;
-      case FUTURE:
-        bookings = bookingRepository.findFutureByBookerId(userId, now);
-        break;
-      case WAITING:
-        bookings = bookingRepository.findByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.WAITING);
-        break;
-      case REJECTED:
-        bookings = bookingRepository.findByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.REJECTED);
-        break;
-      default:
-        bookings = bookingRepository.findByBookerIdOrderByStartDesc(userId);
-    }
+    List<Booking> bookings = switch (state) {
+      case CURRENT -> bookingRepository.findCurrentByBookerId(userId, now);
+      case PAST -> bookingRepository.findPastByBookerId(userId, now);
+      case FUTURE -> bookingRepository.findFutureByBookerId(userId, now);
+      case WAITING -> bookingRepository.findByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.WAITING);
+      case REJECTED -> bookingRepository.findByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.REJECTED);
+      default -> bookingRepository.findByBookerIdOrderByStartDesc(userId);
+    };
 
     return bookings.stream().map(BookingMapper::toBookingDto).toList();
   }
@@ -127,48 +114,24 @@ public class BookingServiceImpl implements BookingService {
     }
 
     LocalDateTime now = LocalDateTime.now();
-    List<Booking> bookings;
-
-    switch (state) {
-      case CURRENT:
-        bookings = bookingRepository.findCurrentByItemOwnerId(userId, now);
-        break;
-      case PAST:
-        bookings = bookingRepository.findPastByItemOwnerId(userId, now);
-        break;
-      case FUTURE:
-        bookings = bookingRepository.findFutureByItemOwnerId(userId, now);
-        break;
-      case WAITING:
-        bookings = bookingRepository.findByItemOwnerIdAndStatusOrderByStartDesc(userId, BookingStatus.WAITING);
-        break;
-      case REJECTED:
-        bookings = bookingRepository.findByItemOwnerIdAndStatusOrderByStartDesc(userId, BookingStatus.REJECTED);
-        break;
-      default:
-        bookings = bookingRepository.findByItemOwnerIdOrderByStartDesc(userId);
-    }
+    List<Booking> bookings = switch (state) {
+      case CURRENT -> bookingRepository.findCurrentByItemOwnerId(userId, now);
+      case PAST -> bookingRepository.findPastByItemOwnerId(userId, now);
+      case FUTURE -> bookingRepository.findFutureByItemOwnerId(userId, now);
+      case WAITING -> bookingRepository.findByItemOwnerIdAndStatusOrderByStartDesc(userId, BookingStatus.WAITING);
+      case REJECTED -> bookingRepository.findByItemOwnerIdAndStatusOrderByStartDesc(userId, BookingStatus.REJECTED);
+      default -> bookingRepository.findByItemOwnerIdOrderByStartDesc(userId);
+    };
 
     return bookings.stream().map(BookingMapper::toBookingDto).toList();
   }
 
   private void validateBookingCreate(BookingCreateDto dto) {
-    if (dto == null) {
-      throw new ValidationException("Booking data must not be null.");
-    }
-    if (dto.getItemId() == null) {
-      throw new ValidationException("Item id must be provided.");
-    }
-    if (dto.getStart() == null) {
-      throw new ValidationException("Start date must be provided.");
-    }
-    if (dto.getEnd() == null) {
-      throw new ValidationException("End date must be provided.");
-    }
-    if (dto.getStart().isBefore(LocalDateTime.now())) {
+    if (dto.getStart() != null && dto.getStart().isBefore(LocalDateTime.now())) {
       throw new ValidationException("Start date must be in the future.");
     }
-    if (dto.getEnd().isBefore(dto.getStart()) || dto.getEnd().isEqual(dto.getStart())) {
+    if (dto.getStart() != null && dto.getEnd() != null 
+        && (dto.getEnd().isBefore(dto.getStart()) || dto.getEnd().isEqual(dto.getStart()))) {
       throw new ValidationException("End date must be after start date.");
     }
   }

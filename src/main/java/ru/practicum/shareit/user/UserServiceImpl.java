@@ -82,7 +82,7 @@ public class UserServiceImpl implements UserService {
 
   private void checkEmailUniqueness(String email, Long excludeUserId) {
     userRepository.findByEmail(email).ifPresent(existingUser -> {
-      if (excludeUserId == null || !existingUser.getId().equals(excludeUserId)) {
+      if (!existingUser.getId().equals(excludeUserId)) {
         throw new ConflictException("Email '" + email + "' is already used by another user.");
       }
     });

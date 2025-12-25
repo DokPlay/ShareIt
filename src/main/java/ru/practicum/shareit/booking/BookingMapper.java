@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.user.User;
@@ -8,10 +9,8 @@ import ru.practicum.shareit.user.UserMapper;
 /**
  * Converts between Booking domain entities and DTOs.
  */
-public final class BookingMapper {
-
-  private BookingMapper() {
-  }
+@UtilityClass
+public class BookingMapper {
 
   /**
    * Maps domain Booking to full DTO.
