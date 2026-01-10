@@ -1,6 +1,5 @@
 package ru.practicum.shareit.booking;
 
-import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -33,7 +32,7 @@ public class BookingController {
   @PostMapping
   public BookingDto create(
       @RequestHeader(USER_HEADER) long userId,
-      @Valid @RequestBody BookingCreateDto bookingCreateDto
+      @RequestBody BookingCreateDto bookingCreateDto
   ) {
     return bookingService.create(userId, bookingCreateDto);
   }
@@ -67,9 +66,11 @@ public class BookingController {
   @GetMapping
   public List<BookingDto> getAllByBooker(
       @RequestHeader(USER_HEADER) long userId,
-      @RequestParam(value = "state", defaultValue = "ALL") BookingState state
+      @RequestParam(value = "state", defaultValue = "ALL") BookingState state,
+      @RequestParam(value = "from", defaultValue = "0") int from,
+      @RequestParam(value = "size", defaultValue = "10") int size
   ) {
-    return bookingService.getAllByBooker(userId, state);
+    return bookingService.getAllByBooker(userId, state, from, size);
   }
 
   /**
@@ -78,8 +79,10 @@ public class BookingController {
   @GetMapping("/owner")
   public List<BookingDto> getAllByOwner(
       @RequestHeader(USER_HEADER) long userId,
-      @RequestParam(value = "state", defaultValue = "ALL") BookingState state
+      @RequestParam(value = "state", defaultValue = "ALL") BookingState state,
+      @RequestParam(value = "from", defaultValue = "0") int from,
+      @RequestParam(value = "size", defaultValue = "10") int size
   ) {
-    return bookingService.getAllByOwner(userId, state);
+    return bookingService.getAllByOwner(userId, state, from, size);
   }
 }
