@@ -1,22 +1,26 @@
-# Maven
-target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+# --------------------
+# Build output
+# --------------------
+# Maven / Gradle (универсально)
+**/target/
+**/build/
+**/out/
 
-# IDE - IntelliJ IDEA
+# Maven wrapper (keep)
+!.mvn/wrapper/maven-wrapper.jar
+
+# --------------------
+# IDE
+# --------------------
+# IntelliJ IDEA
 .idea/
 *.iml
 *.iws
 *.ipr
-out/
 
 # VS Code
 .vscode/
 *.code-workspace
-
-# Gemini
-/.gemini/
 
 # Eclipse/STS
 .classpath
@@ -34,9 +38,16 @@ bin/
 /dist/
 /nbdist/
 /.nb-gradle/
-build/
 
+# Gradle local cache
+.gradle/
+
+# Gemini
+/.gemini/
+
+# --------------------
 # OS junk
+# --------------------
 .DS_Store
 .DS_Store?
 ._*
@@ -46,7 +57,9 @@ ehthumbs.db
 Thumbs.db
 Desktop.ini
 
+# --------------------
 # Secrets and local config
+# --------------------
 .env
 *.env
 .env.local
@@ -55,20 +68,30 @@ application-local.properties
 application-secret.properties
 application-prod.properties
 
+# --------------------
 # Logs
+# --------------------
 logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# --------------------
 # Test results
+# --------------------
 test-output/
-surefire-reports/
+**/surefire-reports/
+test-results/
 
+# --------------------
 # Package files
+# --------------------
 *.jar
 !**/src/main/**/lib/*.jar
+# (на будущее, если появится Gradle Wrapper)
+!gradle/wrapper/gradle-wrapper.jar
+
 *.war
 *.nar
 *.ear
@@ -76,13 +99,21 @@ surefire-reports/
 *.tar.gz
 *.rar
 
+# --------------------
 # Temporary files
+# --------------------
 *.tmp
 *.temp
 *.swp
 *~
 .cache/
 
-# PowerShell test output
-test-results/
-.github/
+# --------------------
+# Local knowledge-base (do not commit)
+# --------------------
+.github/skills/knowledge-base/SKILL.md
+.github/skills/knowledge-base/SKILL_APPENDIX.md
+.github/skills/knowledge-base/SKILL_PART3.md
+
+# Keep the folder in repo if needed
+!.github/skills/knowledge-base/.gitkeep
