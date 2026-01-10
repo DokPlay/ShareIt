@@ -85,3 +85,8 @@ surefire-reports/
 
 # PowerShell test output
 test-results/
+
+# Knowledge base files
+.github/skills/knowledge-base/SKILL.md
+.github/skills/knowledge-base/SKILL_PART3.md
+.github/skills/knowledge-base/SKILL_APPENDIX.md
