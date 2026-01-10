@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item;
 
-import jakarta.validation.constraints.Size;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -21,11 +20,7 @@ import ru.practicum.shareit.booking.BookingShortDto;
 @EqualsAndHashCode(of = "id")
 public class ItemDto {
   private Long id;
-
-  @Size(max = 255, message = "Item name must not exceed 255 characters.")
   private String name;
-
-  @Size(max = 1000, message = "Item description must not exceed 1000 characters.")
   private String description;
 
   private Boolean available;

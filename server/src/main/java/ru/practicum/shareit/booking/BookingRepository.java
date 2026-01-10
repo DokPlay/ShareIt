@@ -2,6 +2,8 @@ package ru.practicum.shareit.booking;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,70 +18,83 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
   /**
    * Finds all bookings by booker, ordered by start date descending.
    */
-  List<Booking> findByBookerIdOrderByStartDesc(Long bookerId);
+       Page<Booking> findByBookerId(Long bookerId, Pageable pageable);
 
   /**
    * Finds current bookings for a booker (start <= now < end).
    */
   @Query("SELECT b FROM Booking b WHERE b.booker.id = :bookerId " +
-         "AND b.start <= :now AND b.end > :now ORDER BY b.start DESC")
-  List<Booking> findCurrentByBookerId(@Param("bookerId") Long bookerId, @Param("now") LocalDateTime now);
+         "AND b.start <= :now AND b.end > :now")
+  Page<Booking> findCurrentByBookerId(@Param("bookerId") Long bookerId,
+                                      @Param("now") LocalDateTime now,
+                                      Pageable pageable);
 
   /**
    * Finds past bookings for a booker (end < now).
    */
   @Query("SELECT b FROM Booking b WHERE b.booker.id = :bookerId " +
-         "AND b.end < :now ORDER BY b.start DESC")
-  List<Booking> findPastByBookerId(@Param("bookerId") Long bookerId, @Param("now") LocalDateTime now);
+         "AND b.end < :now")
+  Page<Booking> findPastByBookerId(@Param("bookerId") Long bookerId,
+                                   @Param("now") LocalDateTime now,
+                                   Pageable pageable);
 
   /**
    * Finds future bookings for a booker (start > now).
    */
   @Query("SELECT b FROM Booking b WHERE b.booker.id = :bookerId " +
-         "AND b.start > :now ORDER BY b.start DESC")
-  List<Booking> findFutureByBookerId(@Param("bookerId") Long bookerId, @Param("now") LocalDateTime now);
+         "AND b.start > :now")
+  Page<Booking> findFutureByBookerId(@Param("bookerId") Long bookerId,
+                                     @Param("now") LocalDateTime now,
+                                     Pageable pageable);
 
   /**
    * Finds bookings by booker with specific status.
    */
-  List<Booking> findByBookerIdAndStatusOrderByStartDesc(Long bookerId, BookingStatus status);
+       Page<Booking> findByBookerIdAndStatus(Long bookerId, BookingStatus status, Pageable pageable);
 
   // ========== Bookings by Owner ==========
 
   /**
    * Finds all bookings for items owned by a user.
    */
-  @Query("SELECT b FROM Booking b WHERE b.item.owner.id = :ownerId ORDER BY b.start DESC")
-  List<Booking> findByItemOwnerIdOrderByStartDesc(@Param("ownerId") Long ownerId);
+       @Query("SELECT b FROM Booking b WHERE b.item.owner.id = :ownerId")
+       Page<Booking> findByItemOwnerId(@Param("ownerId") Long ownerId, Pageable pageable);
 
   /**
    * Finds current bookings for items owned by a user.
    */
   @Query("SELECT b FROM Booking b WHERE b.item.owner.id = :ownerId " +
-         "AND b.start <= :now AND b.end > :now ORDER BY b.start DESC")
-  List<Booking> findCurrentByItemOwnerId(@Param("ownerId") Long ownerId, @Param("now") LocalDateTime now);
+         "AND b.start <= :now AND b.end > :now")
+  Page<Booking> findCurrentByItemOwnerId(@Param("ownerId") Long ownerId,
+                                         @Param("now") LocalDateTime now,
+                                         Pageable pageable);
 
   /**
    * Finds past bookings for items owned by a user.
    */
   @Query("SELECT b FROM Booking b WHERE b.item.owner.id = :ownerId " +
-         "AND b.end < :now ORDER BY b.start DESC")
-  List<Booking> findPastByItemOwnerId(@Param("ownerId") Long ownerId, @Param("now") LocalDateTime now);
+         "AND b.end < :now")
+  Page<Booking> findPastByItemOwnerId(@Param("ownerId") Long ownerId,
+                                      @Param("now") LocalDateTime now,
+                                      Pageable pageable);
 
   /**
    * Finds future bookings for items owned by a user.
    */
   @Query("SELECT b FROM Booking b WHERE b.item.owner.id = :ownerId " +
-         "AND b.start > :now ORDER BY b.start DESC")
-  List<Booking> findFutureByItemOwnerId(@Param("ownerId") Long ownerId, @Param("now") LocalDateTime now);
+         "AND b.start > :now")
+  Page<Booking> findFutureByItemOwnerId(@Param("ownerId") Long ownerId,
+                                        @Param("now") LocalDateTime now,
+                                        Pageable pageable);
 
   /**
    * Finds bookings for items owned by a user with specific status.
    */
   @Query("SELECT b FROM Booking b WHERE b.item.owner.id = :ownerId " +
-         "AND b.status = :status ORDER BY b.start DESC")
-  List<Booking> findByItemOwnerIdAndStatusOrderByStartDesc(@Param("ownerId") Long ownerId, 
-                                                            @Param("status") BookingStatus status);
+         "AND b.status = :status")
+  Page<Booking> findByItemOwnerIdAndStatus(@Param("ownerId") Long ownerId,
+                                           @Param("status") BookingStatus status,
+                                           Pageable pageable);
 
   // ========== Bookings for Item ==========
 

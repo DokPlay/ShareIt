@@ -215,7 +215,7 @@ class BookingControllerTest {
                         itemDto, bookerDto, BookingStatus.WAITING)
         );
 
-        when(bookingService.getAllByBooker(2L, BookingState.ALL)).thenReturn(bookings);
+        when(bookingService.getAllByBooker(2L, BookingState.ALL, 0, 10)).thenReturn(bookings);
 
         mockMvc.perform(get("/bookings")
                         .header(USER_HEADER, 2L)
@@ -224,19 +224,19 @@ class BookingControllerTest {
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].id").value(1L));
 
-        verify(bookingService).getAllByBooker(2L, BookingState.ALL);
+                verify(bookingService).getAllByBooker(2L, BookingState.ALL, 0, 10);
     }
 
     @Test
     void getAllByBooker_WaitingState_Success() throws Exception {
-        when(bookingService.getAllByBooker(2L, BookingState.WAITING)).thenReturn(List.of());
+                when(bookingService.getAllByBooker(2L, BookingState.WAITING, 0, 10)).thenReturn(List.of());
 
         mockMvc.perform(get("/bookings")
                         .header(USER_HEADER, 2L)
                         .param("state", "WAITING"))
                 .andExpect(status().isOk());
 
-        verify(bookingService).getAllByBooker(2L, BookingState.WAITING);
+                verify(bookingService).getAllByBooker(2L, BookingState.WAITING, 0, 10);
     }
 
     @Test
@@ -248,7 +248,7 @@ class BookingControllerTest {
                         itemDto, bookerDto, BookingStatus.WAITING)
         );
 
-        when(bookingService.getAllByOwner(1L, BookingState.ALL)).thenReturn(bookings);
+        when(bookingService.getAllByOwner(1L, BookingState.ALL, 0, 10)).thenReturn(bookings);
 
         mockMvc.perform(get("/bookings/owner")
                         .header(USER_HEADER, 1L)
@@ -256,12 +256,12 @@ class BookingControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1));
 
-        verify(bookingService).getAllByOwner(1L, BookingState.ALL);
+                verify(bookingService).getAllByOwner(1L, BookingState.ALL, 0, 10);
     }
 
     @Test
     void getAllByOwner_NoItems_Returns404() throws Exception {
-        when(bookingService.getAllByOwner(anyLong(), any()))
+        when(bookingService.getAllByOwner(anyLong(), any(), anyInt(), anyInt()))
                 .thenThrow(new NotFoundException("No items"));
 
         mockMvc.perform(get("/bookings/owner")

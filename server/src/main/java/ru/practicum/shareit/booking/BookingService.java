@@ -25,10 +25,10 @@ public interface BookingService {
   /**
    * Gets all bookings for current user filtered by state.
    */
-  List<BookingDto> getAllByBooker(long userId, BookingState state);
+  List<BookingDto> getAllByBooker(long userId, BookingState state, int from, int size);
 
   /**
    * Gets all bookings for items owned by user filtered by state.
    */
-  List<BookingDto> getAllByOwner(long userId, BookingState state);
+  List<BookingDto> getAllByOwner(long userId, BookingState state, int from, int size);
 }

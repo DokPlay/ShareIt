@@ -2,6 +2,8 @@ package ru.practicum.shareit.booking;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -89,50 +91,80 @@ public class BookingServiceImpl implements BookingService {
   }
 
   @Override
-  public List<BookingDto> getAllByBooker(long userId, BookingState state) {
+  public List<BookingDto> getAllByBooker(long userId, BookingState state, int from, int size) {
     if (!userRepository.existsById(userId)) {
       throw new NotFoundException("User with id=" + userId + " not found.");
     }
 
+    validatePagination(from, size);
+    PageRequest pageRequest = PageRequest.of(from / size, size, Sort.by("start").descending());
+
     LocalDateTime now = LocalDateTime.now();
     List<Booking> bookings = switch (state) {
-      case CURRENT -> bookingRepository.findCurrentByBookerId(userId, now);
-      case PAST -> bookingRepository.findPastByBookerId(userId, now);
-      case FUTURE -> bookingRepository.findFutureByBookerId(userId, now);
-      case WAITING -> bookingRepository.findByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.WAITING);
-      case REJECTED -> bookingRepository.findByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.REJECTED);
-      default -> bookingRepository.findByBookerIdOrderByStartDesc(userId);
+      case CURRENT -> bookingRepository.findCurrentByBookerId(userId, now, pageRequest).getContent();
+      case PAST -> bookingRepository.findPastByBookerId(userId, now, pageRequest).getContent();
+      case FUTURE -> bookingRepository.findFutureByBookerId(userId, now, pageRequest).getContent();
+      case WAITING -> bookingRepository.findByBookerIdAndStatus(userId, BookingStatus.WAITING, pageRequest)
+          .getContent();
+      case REJECTED -> bookingRepository.findByBookerIdAndStatus(userId, BookingStatus.REJECTED, pageRequest)
+          .getContent();
+      default -> bookingRepository.findByBookerId(userId, pageRequest).getContent();
     };
 
     return bookings.stream().map(BookingMapper::toBookingDto).toList();
   }
 
   @Override
-  public List<BookingDto> getAllByOwner(long userId, BookingState state) {
+  public List<BookingDto> getAllByOwner(long userId, BookingState state, int from, int size) {
     if (!userRepository.existsById(userId)) {
       throw new NotFoundException("User with id=" + userId + " not found.");
     }
 
+    validatePagination(from, size);
+    PageRequest pageRequest = PageRequest.of(from / size, size, Sort.by("start").descending());
+
     LocalDateTime now = LocalDateTime.now();
     List<Booking> bookings = switch (state) {
-      case CURRENT -> bookingRepository.findCurrentByItemOwnerId(userId, now);
-      case PAST -> bookingRepository.findPastByItemOwnerId(userId, now);
-      case FUTURE -> bookingRepository.findFutureByItemOwnerId(userId, now);
-      case WAITING -> bookingRepository.findByItemOwnerIdAndStatusOrderByStartDesc(userId, BookingStatus.WAITING);
-      case REJECTED -> bookingRepository.findByItemOwnerIdAndStatusOrderByStartDesc(userId, BookingStatus.REJECTED);
-      default -> bookingRepository.findByItemOwnerIdOrderByStartDesc(userId);
+      case CURRENT -> bookingRepository.findCurrentByItemOwnerId(userId, now, pageRequest).getContent();
+      case PAST -> bookingRepository.findPastByItemOwnerId(userId, now, pageRequest).getContent();
+      case FUTURE -> bookingRepository.findFutureByItemOwnerId(userId, now, pageRequest).getContent();
+      case WAITING -> bookingRepository.findByItemOwnerIdAndStatus(userId, BookingStatus.WAITING, pageRequest)
+          .getContent();
+      case REJECTED -> bookingRepository.findByItemOwnerIdAndStatus(userId, BookingStatus.REJECTED, pageRequest)
+          .getContent();
+      default -> bookingRepository.findByItemOwnerId(userId, pageRequest).getContent();
     };
 
     return bookings.stream().map(BookingMapper::toBookingDto).toList();
   }
 
   private void validateBookingCreate(BookingCreateDto dto) {
-    if (dto.getStart() != null && dto.getStart().isBefore(LocalDateTime.now())) {
+    if (dto == null) {
+      throw new ValidationException("Booking body must not be null.");
+    }
+    if (dto.getItemId() == null) {
+      throw new ValidationException("Item id must be provided.");
+    }
+    if (dto.getStart() == null) {
+      throw new ValidationException("Start date must be provided.");
+    }
+    if (dto.getEnd() == null) {
+      throw new ValidationException("End date must be provided.");
+    }
+    if (dto.getStart().isBefore(LocalDateTime.now())) {
       throw new ValidationException("Start date must be in the future.");
     }
-    if (dto.getStart() != null && dto.getEnd() != null 
-        && (dto.getEnd().isBefore(dto.getStart()) || dto.getEnd().isEqual(dto.getStart()))) {
+    if (dto.getEnd().isBefore(dto.getStart()) || dto.getEnd().isEqual(dto.getStart())) {
       throw new ValidationException("End date must be after start date.");
+    }
+  }
+
+  private void validatePagination(int from, int size) {
+    if (from < 0) {
+      throw new ValidationException("Parameter 'from' must be zero or positive.");
+    }
+    if (size <= 0) {
+      throw new ValidationException("Parameter 'size' must be positive.");
     }
   }
 }

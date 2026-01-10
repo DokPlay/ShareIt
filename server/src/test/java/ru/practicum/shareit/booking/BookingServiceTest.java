@@ -255,7 +255,7 @@ class BookingServiceTest {
         createTestBooking();
         createTestBooking();
 
-        List<BookingDto> bookings = bookingService.getAllByBooker(booker.getId(), BookingState.ALL);
+        List<BookingDto> bookings = bookingService.getAllByBooker(booker.getId(), BookingState.ALL, 0, 10);
 
         assertEquals(2, bookings.size());
     }
@@ -264,7 +264,7 @@ class BookingServiceTest {
     void getAllByBooker_Waiting_Success() {
         createTestBooking();
 
-        List<BookingDto> bookings = bookingService.getAllByBooker(booker.getId(), BookingState.WAITING);
+        List<BookingDto> bookings = bookingService.getAllByBooker(booker.getId(), BookingState.WAITING, 0, 10);
 
         assertEquals(1, bookings.size());
         assertEquals(BookingStatus.WAITING, bookings.get(0).getStatus());
@@ -275,7 +275,7 @@ class BookingServiceTest {
         BookingDto booking = createTestBooking();
         bookingService.approve(owner.getId(), booking.getId(), false);
 
-        List<BookingDto> bookings = bookingService.getAllByBooker(booker.getId(), BookingState.REJECTED);
+        List<BookingDto> bookings = bookingService.getAllByBooker(booker.getId(), BookingState.REJECTED, 0, 10);
 
         assertEquals(1, bookings.size());
         assertEquals(BookingStatus.REJECTED, bookings.get(0).getStatus());
@@ -285,15 +285,15 @@ class BookingServiceTest {
     void getAllByBooker_Future_Success() {
         createTestBooking();
 
-        List<BookingDto> bookings = bookingService.getAllByBooker(booker.getId(), BookingState.FUTURE);
+        List<BookingDto> bookings = bookingService.getAllByBooker(booker.getId(), BookingState.FUTURE, 0, 10);
 
         assertEquals(1, bookings.size());
     }
 
     @Test
     void getAllByBooker_UserNotFound_ThrowsNotFound() {
-        assertThrows(NotFoundException.class, () -> 
-            bookingService.getAllByBooker(999L, BookingState.ALL));
+        assertThrows(NotFoundException.class, () ->
+            bookingService.getAllByBooker(999L, BookingState.ALL, 0, 10));
     }
 
     @Test
@@ -301,7 +301,7 @@ class BookingServiceTest {
         createTestBooking();
         createTestBooking();
 
-        List<BookingDto> bookings = bookingService.getAllByOwner(owner.getId(), BookingState.ALL);
+        List<BookingDto> bookings = bookingService.getAllByOwner(owner.getId(), BookingState.ALL, 0, 10);
 
         assertEquals(2, bookings.size());
     }
@@ -310,7 +310,7 @@ class BookingServiceTest {
     void getAllByOwner_Waiting_Success() {
         createTestBooking();
 
-        List<BookingDto> bookings = bookingService.getAllByOwner(owner.getId(), BookingState.WAITING);
+        List<BookingDto> bookings = bookingService.getAllByOwner(owner.getId(), BookingState.WAITING, 0, 10);
 
         assertEquals(1, bookings.size());
         assertEquals(BookingStatus.WAITING, bookings.get(0).getStatus());
@@ -318,8 +318,8 @@ class BookingServiceTest {
 
     @Test
     void getAllByOwner_UserNotFound_ThrowsNotFound() {
-        assertThrows(NotFoundException.class, () -> 
-            bookingService.getAllByOwner(999L, BookingState.ALL));
+        assertThrows(NotFoundException.class, () ->
+            bookingService.getAllByOwner(999L, BookingState.ALL, 0, 10));
     }
 
     private BookingDto createTestBooking() {

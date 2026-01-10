@@ -1,7 +1,5 @@
 package ru.practicum.shareit.item;
 
-import ru.practicum.shareit.user.User;
-
 /**
  * Converts between Comment domain entities and DTOs.
  */
@@ -24,21 +22,5 @@ public final class CommentMapper {
         authorName,
         comment.getCreated()
     );
-  }
-
-  /**
-   * Builds a Comment domain object from DTO plus resolved associations.
-   */
-  public static Comment toComment(CommentDto dto, Item item, User author) {
-    if (dto == null) {
-      return null;
-    }
-    Comment comment = new Comment();
-    comment.setId(dto.getId());
-    comment.setText(dto.getText());
-    comment.setItem(item);
-    comment.setAuthor(author);
-    comment.setCreated(dto.getCreated());
-    return comment;
   }
 }
